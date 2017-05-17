@@ -1,4 +1,4 @@
-# scancode
+# codescan
 _Simple configurable code scanner in Python._
 
 
@@ -56,4 +56,3 @@ Currently, the following options are supported:
     of the file. This option tells the scan to allow licenses to appear starting
     within first 'x' characters of each code file (as provided by this option's
     value).
-
