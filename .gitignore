@@ -1,0 +1,28 @@
+# Eclipse
+bin/
+**/.project
+.settings/
+.classpath
+.cache-main
+.cache-tests
+
+# Linux
+*~
+
+# Mac
+.DS_Store
+
+# Gradle
+.gradle
+build/
+!/tools/build/
+
+# Ansible
+ansible/environments/mac/hosts
+ansible/db_local.ini*
+ansible/tmp/*
+ansible/roles/nginx/files/*.csr
+ansible/roles/nginx/files/*cert.pem
+
+# .zip files must be explicited whitelisted
+*.zip
