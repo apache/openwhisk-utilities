@@ -1,7 +1,6 @@
 # codescan
 _Simple configurable code scanner in Python._
 
-
 ## Usage
 
 ```
