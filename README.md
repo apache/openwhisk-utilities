@@ -2,11 +2,11 @@
 
 Shared utilities used across Apache OpenWhisk project repositories.
 
-### [Utility listing]
+### Utility listing
 
 The following utilities are included in this repository (by subdirectory):
 
-- _scancode_ - Configurable code scanning utility that performs file and line-level checks on all files (exclusions permitted) on a provided path.
+- _**scancode**_ - Configurable code scanning utility that performs file and line-level checks on all files (exclusions permitted) on a provided path.
 
 ### Issues
 
