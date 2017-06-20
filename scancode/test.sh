@@ -9,7 +9,7 @@ cd $SCRIPTDIR
 python ./scanCode.py . -h
 
 # Test basic usage
-python ./scancode/scanCode.py . --config travis.cfg
+python ./scanCode.py . --config travis.cfg
 
 # Test verbose usage
 python ./scanCode.py . --config travis.cfg -v
