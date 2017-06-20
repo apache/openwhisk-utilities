@@ -2,7 +2,7 @@
 
 SCRIPTDIR=$(cd $(dirname "$0") && pwd)
 
-cd cd $HOMEDIR
+cd $HOMEDIR
 
 # Test help
 python ./scanCode.py . -h
