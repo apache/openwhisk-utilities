@@ -3,11 +3,11 @@ set -x #echo on
 
 SCRIPTDIR=$(cd $(dirname "$0") && pwd)
 
-ls-al
+ls -al
 
 cd $HOMEDIR
 
-ls-al
+ls -al
 
 # Test help
 python ($HOMEDIR)/scanCode.py . -h
