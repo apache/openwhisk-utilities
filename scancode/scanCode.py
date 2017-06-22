@@ -7,6 +7,7 @@
    - no trailing whitespace
    - files end with EOL
    - valid license headers in source files (where applicable)
+   - general regex. string search
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -49,22 +50,25 @@ RED = '\033[91m'
 YELLOW = '\033[33m'
 
 # Translatable messages (error and general)
+ERR_REGEX = "file contains a forbidden string. string=[%s], regex=[%s]"
 ERR_GENERAL = "an unspecified error was detected."
 ERR_INVALID_CONFIG_FILE = "Invalid configuration file [%s]: %s.\n"
+ERR_INVALID_SCAN_FUNCTION = "Config. file filter [%s] lists invalid " \
+                            "function [%s]."
 ERR_LICENSE = "file does not include required license header."
+ERR_LICENSE_FILE_NOT_FOUND = "License file [%s] could not be found."
 ERR_NO_EOL_AT_EOF = "file does not end with EOL."
 ERR_PATH_IS_NOT_DIRECTORY = "%s: [%s] is not a valid directory.\n"
 ERR_REQUIRED_SECTION = "Configuration file missing required section: [%s]"
 ERR_SYMBOLIC_LINK = "file is a symbolic link."
 ERR_TABS = "line contains tabs."
 ERR_TRAILING_WHITESPACE = "line has trailing whitespaces."
-ERR_LICENSE_FILE_NOT_FOUND = "License file [%s] could not be found."
-ERR_INVALID_SCAN_FUNCTION = "Config. file filter [%s] lists invalid " \
-                            "function [%s]."
+
 HELP_CONFIG_FILE = "provide custom configuration file"
 HELP_DISPLAY_EXCLUSIONS = "display path exclusion information"
 HELP_ROOT_DIR = "starting directory for the scan"
 HELP_VERBOSE = "enable verbose output"
+
 MSG_CHECKING_FILE = "  [%s]..."
 MSG_CHECKS_PASSED = "All checks passed."
 MSG_CONFIG_ADDING_LICENSE_FILE = "Adding valid license from: [%s], value:\n%s"
@@ -75,11 +79,13 @@ MSG_RUNNING_FILE_CHECKS = "    Running File Check [%s]"
 MSG_RUNNING_LINE_CHECKS = "    Running Line Check [%s]"
 MSG_SCANNING_FILTER = "Scanning files with filter: [%s]:"
 MSG_SCANNING_STARTED = "Scanning files starting at [%s]..."
+
 WARN_CONFIG_SECTION_NOT_FOUND = "Configuration file section [%s] not found."
 WARN_SCAN_EXCLUDED_PATH_SUMMARY = "Scan excluded (%s) directories:"
 WARN_SCAN_EXCLUDED_FILE_SUMMARY = "Scan excluded (%s) files:"
 WARN_SCAN_EXCLUDED_FILE = "  Excluded file: %s"
 WARN_SCAN_EXCLUDED_PATH = "  Excluded path: %s"
+
 MSG_DESCRIPTION = "Scans all source code under specified directory for " \
                   "project compliance using provided configuration."
 
@@ -94,6 +100,7 @@ SECTION_LICENSE = "Licenses"
 SECTION_EXCLUDE = "Excludes"
 SECTION_INCLUDE = "Includes"
 SECTION_OPTIONS = "Options"
+SECTION_REGEX = "Regex"
 
 # Configuration Options known keys
 OPT_LICENSE_SLACK_LEN = "license_slack_length"
@@ -101,7 +108,14 @@ OPT_LICENSE_SLACK_LEN = "license_slack_length"
 # Globals
 """Hold valid license headers within an array strings."""
 valid_licenses = []
+
+"""Paths to exclude from directory search."""
 exclusion_paths = []
+
+"""Regex. patterns to search for."""
+regex_patterns = []
+
+"""globals."""
 exclusion_files_set = set()
 license_search_slack_len = DEFAULT_LICENSE_SEARCH_SLACK
 FILE_CHECK_FUNCTIONS = dict()
@@ -224,6 +238,19 @@ def read_scan_options(config):
         raise Exception(ERR_REQUIRED_SECTION % SECTION_OPTIONS)
 
 
+def read_regex(config):
+    """Read the Regular Expressions from the configuration file."""
+    options_dict = get_config_section_dict(config, SECTION_REGEX)
+    # vprint("options_dict: " + str(options_dict))
+    if options_dict is not None:
+        # each key is a regex string
+        for pattern in options_dict:
+            if pattern is not None:
+                regex_patterns.append(pattern)
+    else:
+        raise Exception(ERR_REQUIRED_SECTION % SECTION_REGEX)
+
+
 def read_config_file(file):
     """Read in and validate configuration file."""
     try:
@@ -238,6 +265,7 @@ def read_config_file(file):
         read_path_inclusions(config)
         read_path_exclusions(config)
         read_scan_options(config)
+        read_regex(config)
     except Exception as e:
         print_error(e)
         return -1
@@ -298,6 +326,16 @@ def is_not_symlink(path):
         return [(0, ERR_SYMBOLIC_LINK)]
     else:
         return None
+
+
+def regex_check(line):
+    """Assert line does not contain strings matching regex. expressions."""
+    vprint("regex pattern: " + str(regex_patterns))
+    for pattern in regex_patterns:
+        if re.search(pattern, line):
+            return ERR_REGEX
+        else:
+            return None
 
 
 # Note: this function must appear after all "check" functions are defined
@@ -469,7 +507,8 @@ if __name__ == "__main__":
     LINE_CHECK_FUNCTIONS.update({
         "no_tabs": no_tabs,
         "no_trailing_spaces": no_trailing_spaces,
-        "eol_at_eof": eol_at_eof
+        "eol_at_eof": eol_at_eof,
+        "regex_check": regex_check
     })
 
     # Read / load configuration file from file (pointer)
