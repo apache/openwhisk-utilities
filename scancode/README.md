@@ -13,17 +13,17 @@ provided configuration.
 ### positional arguments:
  * root_directory   : starting directory for the scan
 
-### optional arguments:  
- * -h, --help       : show this help message and exit  
- * -v, --verbose    : enable verbose output  
- * --config CONFIG  : provide custom configuration file  
- 
+### optional arguments:
+ * -h, --help       : show this help message and exit
+ * -v, --verbose    : enable verbose output
+ * --config CONFIG  : provide custom configuration file
+
  # Configuration file format
- 
+
  ## Supported sections
- 
+
  ### [Licenses]
- 
+
 List of filenames containing the text of valid license (headers).
 These files SHOULD be in the same directory path where scanCode.py
 resides.
@@ -39,10 +39,15 @@ These include:
 - no_tabs
 - no_trailing_spaces
 - eol_at_eof
+- check_regex
 
 ### [Excludes]
 
 List of paths (inclusive of subdirectories) to exlude from code scanning.
+
+### [Regex]
+
+List of regular expressions for forbidden strings, e.g. \w+@company.com
 
 ### [Options]
 
