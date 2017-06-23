@@ -330,7 +330,7 @@ def is_not_symlink(path):
 
 def regex_check(line):
     """Assert line does not contain strings matching regex. expressions."""
-    vprint("regex pattern: " + str(regex_patterns))
+    # vprint("regex pattern: " + str(regex_patterns))
     for pattern in regex_patterns:
         if re.search(pattern, line):
             return ERR_REGEX
