@@ -50,7 +50,7 @@ RED = '\033[91m'
 YELLOW = '\033[33m'
 
 # Translatable messages (error and general)
-ERR_REGEX = "file contains a forbidden string. string=[%s], regex=[%s]"
+ERR_REGEX = "line contains forbidden pattern [%s]. line=[%s]"
 ERR_GENERAL = "an unspecified error was detected."
 ERR_INVALID_CONFIG_FILE = "Invalid configuration file [%s]: %s.\n"
 ERR_INVALID_SCAN_FUNCTION = "Config. file filter [%s] lists invalid " \
@@ -333,7 +333,7 @@ def regex_check(line):
     # vprint("regex pattern: " + str(regex_patterns))
     for pattern in regex_patterns:
         if re.search(pattern, line):
-            return ERR_REGEX
+            return ERR_REGEX % (pattern, line)
         else:
             return None
 
