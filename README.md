@@ -71,7 +71,7 @@ python /path/to/incubator-openwhisk-utilities/scancode/scanCode.py . --config $r
 
 _Note_: A hook a locally installed, so if you check out the repository again, you will need to reinstall it.
 
-    If your project repo. is new or does not run scancode yet, you can choose to create a "pre-build" Bash script that can be included in your Travis CI integration that includes code similar to Step 1 and 2. You can invoke this script within the ".travis.yml" file early in your install or build scripts.
+If your project repo. is new or does not run scancode yet, you can choose to create a "pre-build" Bash script that can be included in your Travis CI integration that includes code similar to Step 1 and 2. You can invoke this script within the ".travis.yml" file early in your install or build scripts.
 
 ### Issues
 
