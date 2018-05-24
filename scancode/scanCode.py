@@ -50,7 +50,7 @@ RED = '\033[91m'
 YELLOW = '\033[33m'
 
 # Translatable messages (error and general)
-ERR_REGEX = "file contains a forbidden string. string=[%s], regex=[%s]"
+ERR_REGEX = "line contains forbidden pattern [%s]. line=[%s]"
 ERR_GENERAL = "an unspecified error was detected."
 ERR_INVALID_CONFIG_FILE = "Invalid configuration file [%s]: %s.\n"
 ERR_INVALID_SCAN_FUNCTION = "Config. file filter [%s] lists invalid " \
@@ -62,7 +62,7 @@ ERR_PATH_IS_NOT_DIRECTORY = "%s: [%s] is not a valid directory.\n"
 ERR_REQUIRED_SECTION = "Configuration file missing required section: [%s]"
 ERR_SYMBOLIC_LINK = "file is a symbolic link."
 ERR_TABS = "line contains tabs."
-ERR_TRAILING_WHITESPACE = "line has trailing whitespaces."
+ERR_TRAILING_WHITESPACE = "line has trailing whitespace."
 
 HELP_CONFIG_FILE = "provide custom configuration file"
 HELP_DISPLAY_EXCLUSIONS = "display path exclusion information"
@@ -333,7 +333,7 @@ def regex_check(line):
     # vprint("regex pattern: " + str(regex_patterns))
     for pattern in regex_patterns:
         if re.search(pattern, line):
-            return ERR_REGEX
+            return ERR_REGEX % (pattern, line)
         else:
             return None
 
@@ -536,14 +536,15 @@ if __name__ == "__main__":
             errors += run_line_checks(path, chks2)
             all_errors += map(lambda p: (path, p[0], p[1]), errors)
 
-    # Display path and file exclusion details
-    if args.display_exclusions or VERBOSE:
+    # Display directory (path) exclusion details
+    if VERBOSE:
         print_warning(WARN_SCAN_EXCLUDED_PATH_SUMMARY % len(exclusion_paths))
         # Display all paths that were excluded (by configuration)
         for excluded_path in exclusion_paths:
             print_warning(WARN_SCAN_EXCLUDED_PATH % excluded_path)
 
-        # Inform caller which files where excluded from these paths
+    # Display which files where excluded from these paths
+    if args.display_exclusions:
         print_warning(WARN_SCAN_EXCLUDED_FILE_SUMMARY %
                       len(exclusion_files_set))
         for excluded_file in exclusion_files_set:
