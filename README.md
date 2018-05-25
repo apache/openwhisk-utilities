@@ -45,7 +45,7 @@ Scan detected 3 error(s) in 1 file(s):
       27: line has trailing whitespaces.
 ```
 
-To make sure this never happens to you, you can run the same tests on your local machine every time you commit changes. 
+To make sure this never happens to you, you can run the same tests on your local machine every time you commit changes.
 
 1. Clone the OpenWhisk utilities project repo.:
 ```bash
