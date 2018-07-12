@@ -409,17 +409,22 @@ def all_paths(root_dir):
     # For every file in every directory (path) starting at "root_dir"
     for dir_path, dir_names, files in os.walk(root_dir):
         for f in files:
+            filename = os.path.join(dir_path, f)
+
             # Map will contain a boolean for each exclusion path tested
             # as input to the lambda function.
             # only if all() values in the Map are "True" (meaning the file is
             # not excluded) then it should yield the filename to run checks on.
             # not dir_path.endswith(p) and
-            if all(map(lambda p: p not in dir_path,
-                       exclusion_paths)):
-                yield os.path.join(dir_path, f)
+            if all(map(lambda p: p not in dir_path, exclusion_paths)):
+               # directory not excluded, now check for any file exclusions
+               if all(map(lambda p: p not in filename, exclusion_paths)):
+                   yield filename
+               else:
+                   exclusion_files_set.add(filename)
             else:
-                exclusion_files_set.add(os.path.join(dir_path, f))
-
+                # directory is excluded
+                exclusion_files_set.add(filename)
 
 def colors():
     """Create a collection of helper functions to colorize strings."""
