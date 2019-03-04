@@ -92,7 +92,7 @@ MSG_DESCRIPTION = "Scans all source code under specified directory for " \
 # Default values for command line arguments
 DEFAULT_ROOT_DIR = "."
 DEFAULT_PROGRAM_PATH = "./"
-DEFAULT_CONFIG_FILE = "scanCode.cfg"
+DEFAULT_CONFIG_FILE = "ASF-Release.cfg"
 DEFAULT_LICENSE_SEARCH_SLACK = 500
 
 # Configuration file sections
