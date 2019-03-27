@@ -33,6 +33,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 import fnmatch
+import pathspec
 import itertools
 import os
 import platform
@@ -65,6 +66,7 @@ ERR_TABS = "line contains tabs."
 ERR_TRAILING_WHITESPACE = "line has trailing whitespace."
 
 HELP_CONFIG_FILE = "provide custom configuration file"
+HELP_GITIGNORE_FILE = "provide .gitignore file for additional path exclusions"
 HELP_DISPLAY_EXCLUSIONS = "display path exclusion information"
 HELP_ROOT_DIR = "starting directory for the scan"
 HELP_VERBOSE = "enable verbose output"
@@ -74,6 +76,7 @@ MSG_CHECKS_PASSED = "All checks passed."
 MSG_CONFIG_ADDING_LICENSE_FILE = "Adding valid license from: [%s], value:\n%s"
 MSG_ERROR_SUMMARY = "Scan detected %d error(s) in %d file(s):"
 MSG_READING_CONFIGURATION = "Reading configuration file [%s]..."
+MSG_READING_GITIGNORE = "Reading gitignore file [%s]..."
 MSG_READING_LICENSE_FILE = "Reading license file [%s]..."
 MSG_RUNNING_FILE_CHECKS = "    Running File Check [%s]"
 MSG_RUNNING_LINE_CHECKS = "    Running Line Check [%s]"
@@ -81,10 +84,10 @@ MSG_SCANNING_FILTER = "Scanning files with filter: [%s]:"
 MSG_SCANNING_STARTED = "Scanning files starting at [%s]..."
 
 WARN_CONFIG_SECTION_NOT_FOUND = "Configuration file section [%s] not found."
-WARN_SCAN_EXCLUDED_PATH_SUMMARY = "Scan excluded (%s) directories:"
+WARN_SCAN_EXCLUDED_PATH_SUMMARY = "Scan excluded (%s) patterns:"
 WARN_SCAN_EXCLUDED_FILE_SUMMARY = "Scan excluded (%s) files:"
 WARN_SCAN_EXCLUDED_FILE = "  Excluded file: %s"
-WARN_SCAN_EXCLUDED_PATH = "  Excluded path: %s"
+WARN_SCAN_EXCLUDED_PATH = "  Excluded pattern: %s"
 
 MSG_DESCRIPTION = "Scans all source code under specified directory for " \
                   "project compliance using provided configuration."
@@ -211,18 +214,21 @@ def read_license_files(config):
         raise Exception(ERR_REQUIRED_SECTION % SECTION_LICENSE)
 
 
-def read_path_exclusions(config):
+def read_path_exclusions(config, gitignore_file):
     """Read the list of paths to exclude from the scan."""
     path_dict = get_config_section_dict(config, SECTION_EXCLUDE)
     # vprint("path_dict: " + str(path_dict))
     if path_dict is not None:
         # each 'key' is an exclusion path
         for key in path_dict:
+            key = str.strip(key)
             if key is not None:
                 exclusion_paths.append(key)
-    else:
-        raise Exception(ERR_REQUIRED_SECTION % SECTION_LICENSE)
 
+    if gitignore_file is not None:
+        print_highlight(MSG_READING_GITIGNORE % gitignore_file.name)
+        for line in gitignore_file.read().splitlines():
+            exclusion_paths.append(line)
 
 def read_scan_options(config):
     """Read the Options from the configuration file."""
@@ -251,7 +257,7 @@ def read_regex(config):
         raise Exception(ERR_REQUIRED_SECTION % SECTION_REGEX)
 
 
-def read_config_file(file):
+def read_config_file(file, gitignore_file):
     """Read in and validate configuration file."""
     try:
         print_highlight(MSG_READING_CONFIGURATION % file.name)
@@ -263,7 +269,7 @@ def read_config_file(file):
         config.readfp(file)
         read_license_files(config)
         read_path_inclusions(config)
-        read_path_exclusions(config)
+        read_path_exclusions(config, gitignore_file)
         read_scan_options(config)
         read_regex(config)
     except Exception as e:
@@ -399,32 +405,20 @@ def run_line_checks(file_path, checks):
                     errors.append((line_number, err))
     return errors
 
-
 def all_paths(root_dir):
     """Generator that returns files with known extensions that can be scanned.
 
     Iteration is recursive beginning at the passed root directory and
     skipping directories that are listed as exception paths.
     """
-    # For every file in every directory (path) starting at "root_dir"
+    spec = pathspec.PathSpec.from_lines('gitwildmatch', exclusion_paths)
+    exclusion_files_set = set(map(lambda f: os.path.join(root_dir, f), spec.match_tree(root_dir)))
+
     for dir_path, dir_names, files in os.walk(root_dir):
         for f in files:
             filename = os.path.join(dir_path, f)
-
-            # Map will contain a boolean for each exclusion path tested
-            # as input to the lambda function.
-            # only if all() values in the Map are "True" (meaning the file is
-            # not excluded) then it should yield the filename to run checks on.
-            # not dir_path.endswith(p) and
-            if all(map(lambda p: p not in dir_path, exclusion_paths)):
-               # directory not excluded, now check for any file exclusions
-               if all(map(lambda p: p not in filename, exclusion_paths)):
-                   yield filename
-               else:
-                   exclusion_files_set.add(filename)
-            else:
-                # directory is excluded
-                exclusion_files_set.add(filename)
+            if filename not in exclusion_files_set:
+                yield filename
 
 def colors():
     """Create a collection of helper functions to colorize strings."""
@@ -488,6 +482,11 @@ if __name__ == "__main__":
                         dest="config",
                         default=DEFAULT_CONFIG_FILE,
                         help=HELP_CONFIG_FILE)
+    parser.add_argument("--gitignore",
+                        type=argparse.FileType('r'),
+                        action="store",
+                        dest="gitignore",
+                        help=HELP_GITIGNORE_FILE)
     parser.add_argument("root_directory",
                         type=str,
                         default=DEFAULT_ROOT_DIR,
@@ -500,6 +499,7 @@ if __name__ == "__main__":
 
     # Config file at this point is an actual file object
     config_file = args.config
+    gitignore_file = args.gitignore
 
     # Assign supported scan functions to either file or line globals
     # These checks run once per-file
@@ -517,7 +517,7 @@ if __name__ == "__main__":
     })
 
     # Read / load configuration file from file (pointer)
-    if read_config_file(config_file) == -1:
+    if read_config_file(config_file, gitignore_file) == -1:
         exit(1)
 
     # Verify starting path parameter is valid
@@ -532,11 +532,12 @@ if __name__ == "__main__":
     # Runs all listed checks on all relevant files.
     all_errors = []
 
+    paths_to_check = set(all_paths(root_dir))
     for fltr, chks1, chks2 in FILTERS_WITH_CHECK_FUNCTIONS:
         # print_error(col.cyan(MSG_SCANNING_FILTER % fltr))
         # print_error("chks1=" + str(chks1))
         # print_error("chks2=" + str(chks2))
-        for path in fnmatch.filter(all_paths(root_dir), fltr):
+        for path in fnmatch.filter(paths_to_check, fltr):
             errors = run_file_checks(path, chks1)
             errors += run_line_checks(path, chks2)
             all_errors += map(lambda p: (path, p[0], p[1]), errors)
@@ -549,7 +550,7 @@ if __name__ == "__main__":
             print_warning(WARN_SCAN_EXCLUDED_PATH % excluded_path)
 
     # Display which files where excluded from these paths
-    if args.display_exclusions:
+    if VERBOSE:
         print_warning(WARN_SCAN_EXCLUDED_FILE_SUMMARY %
                       len(exclusion_files_set))
         for excluded_file in exclusion_files_set:
