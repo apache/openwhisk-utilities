@@ -52,12 +52,7 @@ To make sure this never happens to you, you can run the same tests on your local
 $ git clone https://github.com/apache/incubator-openwhisk-utilities.git
 ```
 
-2. Install required libraries:
-```bash
-$ pip install -r requirements.txt
-```
-
-3. Run the scancode utility against the root directory of your project or subdirectory where your code changes live:
+2. Run the scancode utility against the root directory of your project or subdirectory where your code changes live:
 ```bash
 # Invoke Python utility (works with either Python 2 or 3)
 $ python ./incubator-openwhisk-utilities/scancode/scanCode.py $ROOTDIR

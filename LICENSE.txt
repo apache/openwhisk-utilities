@@ -200,3 +200,15 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+========================================================================
+Mozilla Public License 2.0
+========================================================================
+
+This distribution bundles the following component, which is
+available under an Mozilla Public License 2.0
+(https://www.mozilla.org/en-US/MPL/2.0/).
+
+Pathspec 0.5.9 (https://pypi.org/project/pathspec/) under scanCode/lib.
+License included at licenses/LICENSE-pathspec.txt.

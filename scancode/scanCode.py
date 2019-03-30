@@ -33,13 +33,16 @@ try:
 except ImportError:
     import ConfigParser as configparser
 import fnmatch
-import pathspec
 import itertools
 import os
 import platform
 import re
 import sys
 import textwrap
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib')
+import pathspec
+from gitwildmatch import GitWildMatchPattern
 
 VERBOSE = False
 
@@ -411,7 +414,7 @@ def all_paths(root_dir):
     Iteration is recursive beginning at the passed root directory and
     skipping directories that are listed as exception paths.
     """
-    spec = pathspec.PathSpec.from_lines('gitwildmatch', exclusion_paths)
+    spec = pathspec.PathSpec.from_lines(GitWildMatchPattern, exclusion_paths)
     exclusion_files_set = set(map(lambda f: os.path.join(root_dir, f), spec.match_tree(root_dir)))
 
     for dir_path, dir_names, files in os.walk(root_dir):
