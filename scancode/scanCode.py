@@ -40,7 +40,8 @@ import re
 import sys
 import textwrap
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib')
+# import pathspec from local lib path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/lib')
 import pathspec
 from gitwildmatch import GitWildMatchPattern
 
