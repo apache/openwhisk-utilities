@@ -47,7 +47,7 @@ Scan detected 3 error(s) in 1 file(s):
 
 To make sure this never happens to you, you can run the same tests on your local machine every time you commit changes.
 
-1. Clone the OpenWhisk utilities project repo.:
+1. Clone the OpenWhisk utilities project:
 ```bash
 $ git clone https://github.com/apache/incubator-openwhisk-utilities.git
 ```
@@ -66,7 +66,7 @@ $ cat /path/to/openwhisk/.git/hooks/pre-commit
 
 # determine openwhisk base directory
 root="$(git rev-parse --show-toplevel)"
-python /path/to/incubator-openwhisk-utilities/scancode/scanCode.py . --config $root/tools/
+python /path/to/incubator-openwhisk-utilities/scancode/scanCode.py . --config $root/tools/ --gitignore $root/.gitignore
 ```
 
 _Note_: A hook a locally installed, so if you check out the repository again, you will need to reinstall it.

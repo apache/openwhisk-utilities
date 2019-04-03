@@ -26,3 +26,6 @@ ansible/roles/nginx/files/*cert.pem
 
 # .zip files must be explicited whitelisted
 *.zip
+
+# .pyc files
+*.pyc
