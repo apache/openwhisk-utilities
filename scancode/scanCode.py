@@ -554,7 +554,7 @@ if __name__ == "__main__":
             print_warning(WARN_SCAN_EXCLUDED_PATH % excluded_path)
 
     # Display which files where excluded from these paths
-    if VERBOSE:
+    if args.display_exclusions:
         print_warning(WARN_SCAN_EXCLUDED_FILE_SUMMARY %
                       len(exclusion_files_set))
         for excluded_file in exclusion_files_set:
