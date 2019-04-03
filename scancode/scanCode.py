@@ -86,6 +86,7 @@ MSG_RUNNING_FILE_CHECKS = "    Running File Check [%s]"
 MSG_RUNNING_LINE_CHECKS = "    Running Line Check [%s]"
 MSG_SCANNING_FILTER = "Scanning files with filter: [%s]:"
 MSG_SCANNING_STARTED = "Scanning files starting at [%s]..."
+MSG_SKIPPING_FILE = "SKIPPING non-existent file [%s]"
 
 WARN_CONFIG_SECTION_NOT_FOUND = "Configuration file section [%s] not found."
 WARN_SCAN_EXCLUDED_PATH_SUMMARY = "Scan excluded (%s) patterns:"
@@ -311,6 +312,10 @@ def eol_at_eof(line):
 
 def has_block_license(path):
     """Open file and verify it contains a valid license header."""
+    if not os.path.isfile(path):
+        print_error(MSG_SKIPPING_FILE % file_path)
+        return []
+
     with open(path) as fp:
         for license in valid_licenses:
             # Assure license string is normalized to remove indentations
@@ -393,7 +398,11 @@ def run_file_checks(file_path, checks):
 
 
 def run_line_checks(file_path, checks):
-    """."""
+    """Check each line in a file against given list of filters."""
+    if not os.path.isfile(file_path):
+        print_error(MSG_SKIPPING_FILE % file_path)
+        return []
+
     errors = []
     line_number = 0
     # For each line in the file, run all "line checks"
