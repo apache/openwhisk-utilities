@@ -87,6 +87,7 @@ MSG_RUNNING_LINE_CHECKS = "    Running Line Check [%s]"
 MSG_SCANNING_FILTER = "Scanning files with filter: [%s]:"
 MSG_SCANNING_STARTED = "Scanning files starting at [%s]..."
 MSG_SKIPPING_FILE = "SKIPPING non-existent file [%s]"
+MSG_SKIPPING_BINARY_FILE = "SKIPPING binary file [%s]"
 
 WARN_CONFIG_SECTION_NOT_FOUND = "Configuration file section [%s] not found."
 WARN_SCAN_EXCLUDED_PATH_SUMMARY = "Scan excluded (%s) patterns:"
@@ -271,7 +272,10 @@ def read_config_file(file, gitignore_file):
         # This option prevents options from being normalized to lowercase
         # by allowing the raw string in the config. to be passed through
         config.optionxform = str
-        config.readfp(file)
+        if sys.version_info[0] < 3:
+          config.readfp(file)
+        else:
+          config.read_file(file)
         read_license_files(config)
         read_path_inclusions(config)
         read_path_exclusions(config, gitignore_file)
@@ -313,7 +317,8 @@ def eol_at_eof(line):
 def has_block_license(path):
     """Open file and verify it contains a valid license header."""
     if not os.path.isfile(path):
-        print_error(MSG_SKIPPING_FILE % file_path)
+        if VERBOSE:
+            print_error(MSG_SKIPPING_FILE % path)
         return []
 
     with open(path) as fp:
@@ -400,13 +405,16 @@ def run_file_checks(file_path, checks):
 def run_line_checks(file_path, checks):
     """Check each line in a file against given list of filters."""
     if not os.path.isfile(file_path):
-        print_error(MSG_SKIPPING_FILE % file_path)
+        if VERBOSE:
+            print_error(MSG_SKIPPING_FILE % file_path)
         return []
 
     errors = []
     line_number = 0
     # For each line in the file, run all "line checks"
-    with open(file_path) as fp:
+
+    try: # open file in text mode; skip any binary files
+      with open(file_path, 'r') as fp:
         for line in fp:
             line_number += 1
             for check in checks:
@@ -416,6 +424,9 @@ def run_line_checks(file_path, checks):
                 err = check(line)
                 if err is not None:
                     errors.append((line_number, err))
+    except UnicodeDecodeError:
+        if VERBOSE:
+            print_error(MSG_SKIPPING_BINARY_FILE % file_path)
     return errors
 
 def all_paths(root_dir):
