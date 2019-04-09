@@ -32,7 +32,7 @@ _registered_patterns = {}
 registered pattern factory (``callable``).
 """
 
-def iter_tree(root, on_error=None, follow_links=None):
+def iter_tree(root, on_error=None, follow_links=None, ignore_cycles=True):
 	"""
 	Walks the specified directory for all files.
 
@@ -48,7 +48,11 @@ def iter_tree(root, on_error=None, follow_links=None):
 	to walk symbolik links that resolve to directories. Default is
 	:data:`None` for :data:`True`.
 
-	Raises :exc:`RecursionError` if recursion is detected.
+	*ignore_cycles* (:class:`bool`) ignores any detected cycles during tree
+	discovery. Default is :data:`True`.
+
+	Raises :exc:`RecursionError` if recursion is detected and *ignore_cycles*
+	is :data:`False`.
 
 	Returns an :class:`~collections.abc.Iterable` yielding the path to
 	each file (:class:`str`) relative to *root*.
@@ -59,10 +63,10 @@ def iter_tree(root, on_error=None, follow_links=None):
 	if follow_links is None:
 		follow_links = True
 
-	for file_rel in _iter_tree_next(os.path.abspath(root), '', {}, on_error, follow_links):
+	for file_rel in _iter_tree_next(os.path.abspath(root), '', {}, on_error, follow_links, ignore_cycles):
 		yield file_rel
 
-def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links):
+def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links, ignore_cycles):
 	"""
 	Scan the directory for all descendant files.
 
@@ -80,6 +84,9 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links):
 
 	*follow_links* (:class:`bool`) is whether to walk symbolik links that
 	resolve to directories.
+
+	*ignore_cycles* (:class:`bool`) skips any detected cycles, otherwise
+	raises an exception.
 	"""
 	dir_full = os.path.join(root_full, dir_rel)
 	dir_real = os.path.realpath(dir_full)
@@ -89,6 +96,9 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links):
 	# recursion has occurred.
 	if dir_real not in memo:
 		memo[dir_real] = dir_rel
+	elif ignore_cycles:
+		return
+		yield
 	else:
 		raise RecursionError(real_path=dir_real, first_path=memo[dir_real], second_path=dir_rel)
 
@@ -119,7 +129,7 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links):
 		if stat.S_ISDIR(node_stat.st_mode) and (follow_links or not is_link):
 			# Child node is a directory, recurse into it and yield its
 			# decendant files.
-			for file_rel in _iter_tree_next(root_full, node_rel, memo, on_error, follow_links):
+			for file_rel in _iter_tree_next(root_full, node_rel, memo, on_error, follow_links, ignore_cycles):
 				yield file_rel
 
 		elif stat.S_ISREG(node_stat.st_mode):
