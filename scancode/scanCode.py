@@ -212,8 +212,7 @@ def read_license_files(config):
                     vprint(MSG_READING_LICENSE_FILE % license_filename)
                     str1 = str(temp_file.read())
                     valid_licenses.append(str(str1))
-                    vprint(MSG_CONFIG_ADDING_LICENSE_FILE % (license_filename,
-                                                             str1))
+                    # vprint(MSG_CONFIG_ADDING_LICENSE_FILE % (license_filename, str1))
             except Exception as e:
                 raise e
     else:
@@ -235,6 +234,7 @@ def read_path_exclusions(config, gitignore_file):
         print_highlight(MSG_READING_GITIGNORE % gitignore_file.name)
         for line in gitignore_file.read().splitlines():
             exclusion_paths.append(line)
+
 
 def read_scan_options(config):
     """Read the Options from the configuration file."""
@@ -273,9 +273,9 @@ def read_config_file(file, gitignore_file):
         # by allowing the raw string in the config. to be passed through
         config.optionxform = str
         if sys.version_info[0] < 3:
-          config.readfp(file)
+            config.readfp(file)
         else:
-          config.read_file(file)
+            config.read_file(file)
         read_license_files(config)
         read_path_inclusions(config)
         read_path_exclusions(config, gitignore_file)
@@ -413,21 +413,23 @@ def run_line_checks(file_path, checks):
     line_number = 0
     # For each line in the file, run all "line checks"
 
-    try: # open file in text mode; skip any binary files
-      with open(file_path, 'r') as fp:
-        for line in fp:
-            line_number += 1
-            for check in checks:
-                if line_number == 1:
-                    vprint(col.cyan(MSG_RUNNING_LINE_CHECKS %
-                                    check.__name__))
-                err = check(line)
-                if err is not None:
-                    errors.append((line_number, err))
+    # open file in text mode; skip any binary files
+    try:
+        with open(file_path, 'r') as fp:
+            for line in fp:
+                line_number += 1
+                for check in checks:
+                    if line_number == 1:
+                        vprint(col.cyan(MSG_RUNNING_LINE_CHECKS %
+                                        check.__name__))
+                    err = check(line)
+                    if err is not None:
+                        errors.append((line_number, err))
     except UnicodeDecodeError:
         if VERBOSE:
             print_error(MSG_SKIPPING_BINARY_FILE % file_path)
     return errors
+
 
 def all_paths(root_dir):
     """Generator that returns files with known extensions that can be scanned.
@@ -443,6 +445,7 @@ def all_paths(root_dir):
             filename = os.path.join(dir_path, f)
             if filename not in exclusion_files_set:
                 yield filename
+
 
 def colors():
     """Create a collection of helper functions to colorize strings."""
@@ -558,10 +561,14 @@ if __name__ == "__main__":
 
     paths_to_check = set(all_paths(root_dir))
     for fltr, chks1, chks2 in FILTERS_WITH_CHECK_FUNCTIONS:
-        # print_error(col.cyan(MSG_SCANNING_FILTER % fltr))
-        # print_error("chks1=" + str(chks1))
-        # print_error("chks2=" + str(chks2))
-        for path in fnmatch.filter(paths_to_check, fltr):
+        # vprint(col.cyan(MSG_SCANNING_FILTER % fltr))
+        # vprint("chks1=" + str(chks1))
+        # vprint("chks2=" + str(chks2))
+        matches = fnmatch.filter(paths_to_check, fltr)
+        # vprint("paths=" + str(paths_to_check))
+        # vprint("matches=" + str(matches))
+        for path in matches:
+            # vprint("path=[" + path + "]")
             errors = run_file_checks(path, chks1)
             errors += run_line_checks(path, chks2)
             all_errors += map(lambda p: (path, p[0], p[1]), errors)
