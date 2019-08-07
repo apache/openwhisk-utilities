@@ -17,7 +17,7 @@
 #
 -->
 
-[![Build Status](https://travis-ci.org/apache/incubator-openwhisk-utilities.svg?branch=master)](https://travis-ci.org/apache/incubator-openwhisk-utilities)
+[![Build Status](https://travis-ci.org/apache/openwhisk-utilities.svg?branch=master)](https://travis-ci.org/apache/openwhisk-utilities)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 # OpenWhisk Utilities
@@ -49,13 +49,13 @@ To make sure this never happens to you, you can run the same tests on your local
 
 1. Clone the OpenWhisk utilities project:
 ```bash
-$ git clone https://github.com/apache/incubator-openwhisk-utilities.git
+$ git clone https://github.com/apache/openwhisk-utilities.git
 ```
 
 2. Run the scancode utility against the root directory of your project or subdirectory where your code changes live:
 ```bash
 # Invoke Python utility (works with either Python 2 or 3)
-$ python ./incubator-openwhisk-utilities/scancode/scanCode.py $ROOTDIR
+$ python ./openwhisk-utilities/scancode/scanCode.py $ROOTDIR
 ```
 
 It is worth adding a Git [pre-commit hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to automatically run the checks before you can even type in a Git commit message. Here is a sample `pre-commit` file:
@@ -66,7 +66,7 @@ $ cat /path/to/openwhisk/.git/hooks/pre-commit
 
 # determine openwhisk base directory
 root="$(git rev-parse --show-toplevel)"
-python /path/to/incubator-openwhisk-utilities/scancode/scanCode.py . --config $root/tools/ --gitignore $root/.gitignore
+python /path/to/openwhisk-utilities/scancode/scanCode.py . --config $root/tools/ --gitignore $root/.gitignore
 ```
 
 _Note_: A hook a locally installed, so if you check out the repository again, you will need to reinstall it.

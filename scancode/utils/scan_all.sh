@@ -19,7 +19,7 @@
 if [ $1 ]
 then
     while read fn; do
-        cd incubator-openwhisk-utilities
+        cd openwhisk-utilities
         echo "scanning repo:" $fn
         scancode/scanCode.py --config scancode/ASF-Release.cfg ../$fn
         cd ..
