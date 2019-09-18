@@ -64,9 +64,12 @@ It is worth adding a Git [pre-commit hook](https://git-scm.com/book/en/v2/Custom
 $ cat /path/to/openwhisk/.git/hooks/pre-commit
 #!/usr/bin/env bash
 
+# -- Code scanning --
+# See https://github.com/apache/openwhisk-utilities
 # determine openwhisk base directory
 root="$(git rev-parse --show-toplevel)"
-python /path/to/openwhisk-utilities/scancode/scanCode.py . --config $root/tools/ --gitignore $root/.gitignore
+scancode_path="/path/to/openwhisk-utilities/scancode"
+python $scancode_path/scanCode.py --config $scancode_path/ASF-Release.cfg --gitignore $root/.gitignore $root
 ```
 
 _Note_: A hook a locally installed, so if you check out the repository again, you will need to reinstall it.
