@@ -20,6 +20,14 @@ language: python
 python:
   - "2.7"
   - "3.5"
+
+notifications:
+  email: false
+  webhooks:
+    urls:
+      # travis2slack webhook to enable DMs on openwhisk-team.slack.com to PR authors with TravisCI results
+      secure: "QB708ISeb+8Mp1FPW+dU+TfdfLfgp8e0Xmm0jlMJfFHdH+pWaI6+PFgSGmy3V9wmwDbRsvMKtZQYWCmO8JN8QsnxCWRmshEVvrsNJnvJ5gCfpjc+UY5IeKqucDr4PzMrUPHY4PpmZgWszRHzW2gIdSWMd43iXUsYV8xoW1MYagIGDEqf7OHBLg5p7mjClnqAGsRh8cVJHHls/RE6ziYxwR5752xd3AHiYBwlfB00h1NrY3E5uVPVbe95SHuS8RXRdFKhTar4VB/n36sxaEdJ46gPS4dmPa+AAUVBbyn6ye6a6sNPJfFQslMLAvjCHIEwWiTwYIOEdGHwvD3blBu2cvEhMCr+mxQyILDbJGVJhzC+axgmeoF/anxS5rr/WNsT7qiCM4pNViIu0LXk/6jVCvoy88cUeJDcsImcBRIbAxFrWO+WHBSUsIRrmhXELT3jD7mI+W7QKrRZPv4L0X/gL+IdqpeTFBaR/6LTMbi8x36e9g/ALWfbLFfYRwfN9vt1/wrZPuU0Jo7rLf8AkLX7AHRO1r1lrvqrju8Ne/9IzUq8tOvQhkzH6uOb9KAbg4+F/3xDJIC5GRJVd1nIRlaQh4AkSzMuUcUZGjiYIkL0j1b9LbrRr5Xzbv24K8NPWAtNL+1yBtOBbmYW8EKyCOgAIzZifjzG7TkDx8OUrhVRziQ="
+
 # command to install dependencies
 # install: "pip install -r requirements.txt"
 # command to run tests
