@@ -62,7 +62,7 @@ These include:
 
 ### [Excludes]
 
-List of paths (inclusive of subdirectories) to exlude from code scanning.
+List of paths (inclusive of subdirectories) to exclude from code scanning.
 
 ### [Regex]
 

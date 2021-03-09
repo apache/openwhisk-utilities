@@ -45,7 +45,7 @@ def iter_tree(root, on_error=None, follow_links=None, ignore_cycles=True):
 	exceptions.
 
 	*follow_links* (:class:`bool` or :data:`None`) optionally is whether
-	to walk symbolik links that resolve to directories. Default is
+	to walk symbolic links that resolve to directories. Default is
 	:data:`None` for :data:`True`.
 
 	*ignore_cycles* (:class:`bool`) ignores any detected cycles during tree
@@ -82,7 +82,7 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links, ignore_cyc
 	*on_error* (:class:`~collections.abc.Callable` or :data:`None`)
 	optionally is the error handler for file-system exceptions.
 
-	*follow_links* (:class:`bool`) is whether to walk symbolik links that
+	*follow_links* (:class:`bool`) is whether to walk symbolic links that
 	resolve to directories.
 
 	*ignore_cycles* (:class:`bool`) skips any detected cycles, otherwise
@@ -128,7 +128,7 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links, ignore_cyc
 
 		if stat.S_ISDIR(node_stat.st_mode) and (follow_links or not is_link):
 			# Child node is a directory, recurse into it and yield its
-			# decendant files.
+			# descendant files.
 			for file_rel in _iter_tree_next(root_full, node_rel, memo, on_error, follow_links, ignore_cycles):
 				yield file_rel
 
@@ -139,7 +139,7 @@ def _iter_tree_next(root_full, dir_rel, memo, on_error, follow_links, ignore_cyc
 	# NOTE: Make sure to remove the canonical (real) path of the directory
 	# from the ancestors memo once we are done with it. This allows the
 	# same directory to appear multiple times. If this is not done, the
-	# second occurance of the directory will be incorrectly interpreted as
+	# second occurrence of the directory will be incorrectly interpreted as
 	# a recursion. See <https://github.com/cpburnz/python-path-specification/pull/7>.
 	del memo[dir_real]
 

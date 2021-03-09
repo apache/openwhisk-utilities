@@ -135,7 +135,7 @@ class PathSpec(object):
 
 
 		*follow_links* (:class:`bool` or :data:`None`) optionally is whether
-		to walk symbolik links that resolve to directories. See
+		to walk symbolic links that resolve to directories. See
 		:func:`~pathspec.util.iter_tree` for more information.
 
 		Returns the matched files (:class:`~collections.abc.Iterable` of
