@@ -121,7 +121,7 @@ class GitWildMatchPattern(RegexPattern):
 			if not pattern_segs[-1] and len(pattern_segs) > 1:
 				# A pattern ending with a slash ('/') will match all descendant
 				# paths if it is a directory but not if it is a regular file.
-				# This is equivilent to "{pattern}/**". So, set last segment to
+				# This is equivalent to "{pattern}/**". So, set last segment to
 				# double asterisks to include all descendants.
 				pattern_segs[-1] = '**'
 
@@ -224,28 +224,28 @@ class GitWildMatchPattern(RegexPattern):
 				regex += '[^/]'
 
 			elif char == '[':
-				# Braket expression wildcard. Except for the beginning
-				# exclamation mark, the whole braket expression can be used
+				# Bracket expression wildcard. Except for the beginning
+				# exclamation mark, the whole bracket expression can be used
 				# directly as regex but we have to find where the expression
 				# ends.
 				# - "[][!]" matchs ']', '[' and '!'.
 				# - "[]-]" matchs ']' and '-'.
 				# - "[!]a-]" matchs any character except ']', 'a' and '-'.
 				j = i
-				# Pass brack expression negation.
+				# Pass bracket expression negation.
 				if j < end and pattern[j] == '!':
 					j += 1
-				# Pass first closing braket if it is at the beginning of the
+				# Pass first closing bracket if it is at the beginning of the
 				# expression.
 				if j < end and pattern[j] == ']':
 					j += 1
-				# Find closing braket. Stop once we reach the end or find it.
+				# Find closing bracket. Stop once we reach the end or find it.
 				while j < end and pattern[j] != ']':
 					j += 1
 
 				if j < end:
-					# Found end of braket expression. Increment j to be one past
-					# the closing braket:
+					# Found end of bracket expression. Increment j to be one past
+					# the closing bracket:
 					#
 					#  [...]
 					#   ^   ^
@@ -255,11 +255,11 @@ class GitWildMatchPattern(RegexPattern):
 					expr = '['
 
 					if pattern[i] == '!':
-						# Braket expression needs to be negated.
+						# Bracket expression needs to be negated.
 						expr += '^'
 						i += 1
 					elif pattern[i] == '^':
-						# POSIX declares that the regex braket expression negation
+						# POSIX declares that the regex bracket expression negation
 						# "[^...]" is undefined in a glob pattern. Python's
 						# `fnmatch.translate()` escapes the caret ('^') as a
 						# literal. To maintain consistency with undefined behavior,
@@ -267,19 +267,19 @@ class GitWildMatchPattern(RegexPattern):
 						expr += '\\^'
 						i += 1
 
-					# Build regex braket expression. Escape slashes so they are
+					# Build regex bracket expression. Escape slashes so they are
 					# treated as literal slashes by regex as defined by POSIX.
 					expr += pattern[i:j].replace('\\', '\\\\')
 
-					# Add regex braket expression to regex result.
+					# Add regex bracket expression to regex result.
 					regex += expr
 
-					# Set i to one past the closing braket.
+					# Set i to one past the closing bracket.
 					i = j
 
 				else:
-					# Failed to find closing braket, treat opening braket as a
-					# braket literal instead of as an expression.
+					# Failed to find closing bracket, treat opening bracket as a
+					# bracket literal instead of as an expression.
 					regex += '\\['
 
 			else:
