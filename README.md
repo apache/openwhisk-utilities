@@ -78,6 +78,6 @@ If your project repo. is new or does not run scancode yet, you can choose to cre
 
 ### Issues
 
-Report bugs, ask questions and request features [here on GitHub](../../issues).
+Report bugs, ask questions and request features [here on GitHub](https://github.com/apache/openwhisk-utilities/issues).
 
-You can also join our slack channel and chat with developers. To get access to our slack channel, request an invite [here](http://slack.openwhisk.org).
+You can also join our Slack channel and chat with developers. To get access to our Slack channel, request an invite [here](http://slack.openwhisk.org).

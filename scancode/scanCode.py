@@ -72,7 +72,7 @@ ERR_TRAILING_WHITESPACE = "line has trailing whitespace."
 HELP_CONFIG_FILE = "provide custom configuration file"
 HELP_GITIGNORE_FILE = "provide .gitignore file for additional path exclusions"
 HELP_DISPLAY_EXCLUSIONS = "display path exclusion information"
-HELP_ROOT_DIR = "starting directory for the scan"
+HELP_ROOT_DIR = "the starting directory for the scan"
 HELP_VERBOSE = "enable verbose output"
 
 MSG_CHECKING_FILE = "  [%s]..."

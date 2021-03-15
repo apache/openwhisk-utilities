@@ -28,7 +28,7 @@ then
         :
         OWNER=$2
     else
-        echo "ERROR: Did not add Github fork name for ORIGIN."
+        echo "ERROR: Did not add GitHub fork name for ORIGIN."
         echo $USAGE
         exit 2
     fi
@@ -52,7 +52,7 @@ then
         git remote
         cd ..
     else
-        echo "INFO: Did not add Github fork name for UPSTREAM. Did not add REMOTE"
+        echo "INFO: Did not add GitHub fork name for UPSTREAM. Did not add REMOTE"
     fi
 else
     echo "ERROR: Argument not present: GitHub Repository Name"

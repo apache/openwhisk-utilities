@@ -30,7 +30,7 @@ Scans all source code under specified directory for project compliance using
 provided configuration.
 
 ### positional arguments:
- * root_directory   : starting directory for the scan
+ * root_directory   : the starting directory for the scan
 
 ### optional arguments:
  * -h, --help       : show this help message and exit

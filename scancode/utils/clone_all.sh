@@ -29,7 +29,7 @@ then
                 source ./repo_clone.sh $fn $2 $3
             done < $1
         else
-            printf "ERROR: Did not add Github fork name for UPSTREAM. Did not add REMOTE\n"
+            printf "ERROR: Did not add GitHub fork name for UPSTREAM. Did not add REMOTE\n"
             printf "$USAGE"
             exit 3
         fi
