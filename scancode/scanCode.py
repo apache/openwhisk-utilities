@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Executable Python script for scanning source code for compliance.
 
    This script checks some (simple) conventions:

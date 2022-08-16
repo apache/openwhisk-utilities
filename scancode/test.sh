@@ -23,10 +23,10 @@ SCRIPTDIR=$(cd $(dirname "$0") && pwd)
 cd $SCRIPTDIR
 
 # Test help
-python ./scanCode.py . -h
+python3 ./scanCode.py . -h
 
 # Test basic usage
-python ./scanCode.py . --config travis.cfg
+python3 ./scanCode.py . --config travis.cfg
 
 # Test verbose usage
-python ./scanCode.py . --config travis.cfg -v
+python3 ./scanCode.py . --config travis.cfg -v
