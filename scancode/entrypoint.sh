@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-python3 /scancode/scanCode.py . --config /scancode/$1
+python3 /scancode/scanCode.py --config /scancode/$1 $2
