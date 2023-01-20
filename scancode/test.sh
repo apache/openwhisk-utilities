@@ -26,7 +26,7 @@ cd $SCRIPTDIR
 python3 ./scanCode.py . -h
 
 # Test basic usage
-python3 ./scanCode.py . --config travis.cfg
+python3 ./scanCode.py . --config scancode-ci.cfg
 
 # Test verbose usage
-python3 ./scanCode.py . --config travis.cfg -v
+python3 ./scanCode.py . --config scancode-ci.cfg -v

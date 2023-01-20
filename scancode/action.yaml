@@ -21,8 +21,13 @@ inputs:
     description: 'Configuration file defining the rules to apply'
     required: false
     default: 'ASF-Release.cfg'
+  rootDir:
+    description: 'Root directory to scan'
+    required: false
+    default: .
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.config }}
+    - ${{ inputs.rootDir }}
