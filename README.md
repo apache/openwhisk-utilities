@@ -17,8 +17,10 @@
 #
 -->
 
-[![Build Status](https://travis-ci.com/apache/openwhisk-utilities.svg?branch=master)](https://travis-ci.com/github/apache/openwhisk-utilities)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Continuous Integration](https://github.com/apache/openwhisk-utilities/actions/workflows/ci.yaml/badge.svg)](https://github.com/apache/openwhisk-utilities/actions/workflows/ci.yaml)
+[![Scan Code](https://github.com/apache/openwhisk-utilities/actions/workflows/scancode.yaml/badge.svg)](https://github.com/apache/openwhisk-utilities/actions/workflows/scancode.yaml)
+
 
 # OpenWhisk Utilities
 
@@ -54,8 +56,7 @@ $ git clone https://github.com/apache/openwhisk-utilities.git
 
 2. Run the scancode utility against the root directory of your project or subdirectory where your code changes live:
 ```bash
-# Invoke Python utility (works with either Python 2 or 3)
-$ python ./openwhisk-utilities/scancode/scanCode.py $ROOTDIR
+$ python3 ./openwhisk-utilities/scancode/scanCode.py $ROOTDIR
 ```
 
 It is worth adding a Git [pre-commit hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to automatically run the checks before you can even type in a Git commit message. Here is a sample `pre-commit` file:
@@ -69,12 +70,20 @@ $ cat /path/to/openwhisk/.git/hooks/pre-commit
 # determine openwhisk base directory
 root="$(git rev-parse --show-toplevel)"
 scancode_path="/path/to/openwhisk-utilities/scancode"
-python $scancode_path/scanCode.py --config $scancode_path/ASF-Release.cfg --gitignore $root/.gitignore $root
+python3 $scancode_path/scanCode.py --config $scancode_path/ASF-Release.cfg --gitignore $root/.gitignore $root
 ```
 
 _Note_: A hook a locally installed, so if you check out the repository again, you will need to reinstall it.
 
-If your project repo. is new or does not run scancode yet, you can choose to create a "pre-build" Bash script that can be included in your Travis CI integration that includes code similar to Step 1 and 2. You can invoke this script within the ".travis.yml" file early in your install or build scripts.
+Apache OpenWhisk repositories can be configured to run scancode as part of their CI process by invoking it
+as a GitHub action.  It should be run immediately after the checkout action.  For example:
+```yaml
+      # Checkout just this repo and run scanCode before we do anything else
+      - name: Checkout runtime repo
+        uses: actions/checkout@v3
+      - name: Scan Code
+        uses: apache/openwhisk-utilities/scancode@master
+```
 
 ### Issues
 
